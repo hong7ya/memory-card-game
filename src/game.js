@@ -34,7 +34,9 @@ export default function game(app) {
 
   function getMatches() {
     const currentMatch = [];
+    const goodMatchedCards = [];
     const clickableForMatch = currentMatch.length < 2;
+
     function matchWith({ cardId }) {
       currentMatch.push(cardId);
       if (currentMatch.length === 2) {
@@ -52,6 +54,7 @@ export default function game(app) {
           closeCard({ cardElement: firstCard });
           closeCard({ cardElement: secondCard });
         } else {
+          goodMatchedCards.push(firstCard, secondCard);
         }
       }
     }
