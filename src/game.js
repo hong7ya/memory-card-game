@@ -24,11 +24,48 @@ export default function game(app) {
       checkboxElement.checked = true;
       checkboxElement.disabled = true;
 
+      if (clickableForMatch) {
+        matchWith({ cardId: checkboxElement.parentElement.dataset.cardId });
+      }
     }
   });
 
-  app.append(boardElement);
+  const { clickableForMatch, matchWith } = getMatches();
 
+  function getMatches() {
+    const currentMatch = [];
+    const clickableForMatch = currentMatch.length < 2;
+    function matchWith({ cardId }) {
+      currentMatch.push(cardId);
+      if (currentMatch.length === 2) {
+        const firstId = currentMatch.pop();
+        const secondId = currentMatch.pop();
+
+        const firstCard = document.querySelector(
+          `div[data-card-id="${firstId}"]`
+        );
+        const secondCard = document.querySelector(
+          `div[data-card-id="${secondId}"]`
+        );
+
+        if (firstId[0] !== secondId[0]) {
+          closeCard({ cardElement: firstCard });
+          closeCard({ cardElement: secondCard });
+        } else {
+        }
+      }
+    }
+
+    return { clickableForMatch, matchWith };
+  }
+
+  function closeCard({ cardElement }) {
+    const checkboxElement = cardElement.firstElementChild;
+    checkboxElement.checked = false;
+    checkboxElement.disabled = false;
+    cardElement.style.opacity = 0;
+  }
+  app.append(boardElement);
   function getBoardElement({ randomCards }) {
     const board = document.createElement('div');
     board.dataset.testid = 'board';
