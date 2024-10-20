@@ -80,3 +80,21 @@ test('첫 번째 카드를 누른 후 두 번째 카드를 누르면, 다른 이
   expect(within(secondCard).getByRole('checkbox')).not.toBeChecked();
   expect(within(secondCard).getByRole('checkbox')).not.toBeDisabled();
 });
+
+test('모든 이미지를 맞췄을 경우, End!! 텍스트가 표시된다.', async () => {
+  const { user } = await render();
+
+  const bundledCards = screen
+    .getAllByTestId('card')
+    .sort(
+      (aElement, bElement) =>
+        aElement.dataset.cardId.codePointAt(0) -
+        bElement.dataset.cardId.codePointAt(0)
+    );
+
+  for (const card of bundledCards) {
+    await user.click(card);
+  }
+
+  expect(screen.getByText('End!!!')).toBeInTheDocument();
+});

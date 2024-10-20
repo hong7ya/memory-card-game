@@ -57,6 +57,11 @@ export default function game(app) {
           goodMatchedCards.push(firstCard, secondCard);
         }
       }
+      if (goodMatchedCards.length === 12) {
+        const End = document.createElement('span');
+        End.textContent = 'End!!!';
+        app.prepend(End);
+      }
     }
 
     return { clickableForMatch, matchWith };
