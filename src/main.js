@@ -1,5 +1,3 @@
-// import { setupCounter } from './counter.js';
+import game from './game.js';
 
-document.querySelector('#app').innerHTML = ``;
-
-// setupCounter(document.querySelector('#counter'))
+game(document.querySelector('#app'));
