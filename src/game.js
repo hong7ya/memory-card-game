@@ -5,7 +5,27 @@ export default function game(app) {
 
   const boardElement = getBoardElement({ randomCards });
 
-  // TODO : 버튼들 넣기
+  boardElement.addEventListener('click', (e) => {
+    if (
+      e.target.dataset.testid === 'card' ||
+      e.target.matches('input') ||
+      e.target.matches('img')
+    ) {
+      let checkboxElement;
+      if (e.target.dataset.testid === 'card') {
+        checkboxElement = e.target.firstElementChild;
+      }
+      if (e.target.matches('input')) {
+        checkboxElement = e.target;
+      }
+      if (e.target.matches('img')) {
+        checkboxElement = e.target.previousElementSibling;
+      }
+      checkboxElement.checked = true;
+      checkboxElement.disabled = true;
+
+    }
+  });
 
   app.append(boardElement);
 

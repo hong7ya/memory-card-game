@@ -27,3 +27,14 @@ test('카드목록이 제대로 렌더링 된다.', async () => {
     expect(within(card).getByRole('img')).toBeInTheDocument();
   });
 });
+test('카드를 누르면 해당 카드는 보여지고 선택되며 다시 선택할 수 없다.', async () => {
+  const { user } = await render();
+
+  const cards = screen.getAllByTestId('card');
+
+  await user.click(cards[0]);
+
+  expect(within(cards[0]).getByRole('img')).toBeVisible();
+  expect(within(cards[0]).getByRole('checkbox')).toBeChecked();
+  expect(within(cards[0]).getByRole('checkbox')).toBeDisabled();
+});
