@@ -27,6 +27,26 @@ test('카드목록이 제대로 렌더링 된다.', async () => {
     expect(within(card).getByRole('img')).toBeInTheDocument();
   });
 });
+
+test('reset 버튼을 누르면 카드가 재배치 된다.', async () => {
+  const { user } = await render();
+  const originCards = screen
+    .getAllByTestId('card')
+    .map((ele) => ele.dataset.cardId)
+    .join('');
+
+  const resetButton = screen.getByRole('button', { name: 'reset' });
+
+  await user.click(resetButton);
+
+  const resetCards = screen
+    .getAllByTestId('card')
+    .map((ele) => ele.dataset.cardId)
+    .join('');
+
+  expect(originCards).not.toBe(resetCards);
+});
+
 test('카드를 누르면 해당 카드는 보여지고 선택되며 다시 선택할 수 없다.', async () => {
   const { user } = await render();
 

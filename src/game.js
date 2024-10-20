@@ -30,6 +30,14 @@ export default function game(app) {
     }
   });
 
+  const resetButtonElement = getResetButtonElement();
+
+  resetButtonElement.addEventListener('click', (e) => {
+    const cards = getCards({ getCardElement });
+    const randomCards = getRandomCards({ cards });
+    boardElement.innerHTML = getBoardElement({ randomCards }).innerHTML;
+  });
+
   const { clickableForMatch, matchWith } = getMatches();
 
   function getMatches() {
@@ -74,6 +82,15 @@ export default function game(app) {
     cardElement.style.opacity = 0;
   }
   app.append(boardElement);
+  app.append(boardElement, resetButtonElement);
+
+  function getResetButtonElement() {
+    const button = document.createElement('button');
+    button.textContent = 'reset';
+
+    return button;
+  }
+
   function getBoardElement({ randomCards }) {
     const board = document.createElement('div');
     board.dataset.testid = 'board';
