@@ -11,21 +11,20 @@ export default function game(app) {
       e.target.matches('input') ||
       e.target.matches('img')
     ) {
-      let checkboxElement;
+      let cardElement;
       if (e.target.dataset.testid === 'card') {
-        checkboxElement = e.target.firstElementChild;
+        cardElement = e.target;
       }
       if (e.target.matches('input')) {
-        checkboxElement = e.target;
+        cardElement = e.target.parentElement;
       }
       if (e.target.matches('img')) {
-        checkboxElement = e.target.previousElementSibling;
+        cardElement = e.target.parentElement;
       }
-      checkboxElement.checked = true;
-      checkboxElement.disabled = true;
+      openCard({ cardElement });
 
       if (clickableForMatch) {
-        matchWith({ cardId: checkboxElement.parentElement.dataset.cardId });
+        matchWith({ cardId: cardElement.dataset.cardId });
       }
     }
   });
@@ -81,7 +80,14 @@ export default function game(app) {
     checkboxElement.disabled = false;
     cardElement.style.opacity = 0;
   }
-  app.append(boardElement);
+
+  function openCard({ cardElement }) {
+    const checkboxElement = cardElement.firstElementChild;
+    checkboxElement.checked = true;
+    checkboxElement.disabled = true;
+    cardElement.style.opacity = 1;
+  }
+
   app.append(boardElement, resetButtonElement);
 
   function getResetButtonElement() {
@@ -139,6 +145,7 @@ export default function game(app) {
     img.src = `/card${imageNum}.png`;
 
     card.append(check, img);
+    closeCard({ cardElement: card });
 
     return card;
   }

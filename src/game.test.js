@@ -25,6 +25,9 @@ test('카드목록이 제대로 렌더링 된다.', async () => {
     // 안에서 또 쿼리 하려면 within 사용
     expect(within(card).getByRole('checkbox')).toBeInTheDocument();
     expect(within(card).getByRole('img')).toBeInTheDocument();
+    expect(within(card).getByRole('img')).not.toBeVisible();
+    expect(within(card).getByRole('checkbox')).not.toBeChecked();
+    expect(within(card).getByRole('checkbox')).not.toBeDisabled();
   });
 });
 
