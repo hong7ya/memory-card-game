@@ -99,7 +99,7 @@ export default function game(app) {
 
   function getBoardElement({ randomCards }) {
     const board = document.createElement('div');
-    board.dataset.testid = 'board';
+    board.id = 'board';
     board.append(...randomCards.values());
 
     return board;
