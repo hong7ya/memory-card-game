@@ -1,91 +1,108 @@
 export default function game(app) {
+  const currentMatch = [];
+  const goodMatchedCards = [];
+  let clearTimer;
+
   const cards = getCards({ getCardElement });
 
   const randomCards = getRandomCards({ cards });
 
   const boardElement = getBoardElement({ randomCards });
 
-  boardElement.addEventListener('click', (e) => {
-    if (
-      e.target.dataset.testid === 'card' ||
-      e.target.matches('input') ||
-      e.target.matches('img')
-    ) {
-      let cardElement;
-      if (e.target.dataset.testid === 'card') {
-        cardElement = e.target;
-      }
-      if (e.target.matches('input')) {
-        cardElement = e.target.parentElement;
-      }
-      if (e.target.matches('img')) {
-        cardElement = e.target.parentElement;
-      }
-      openCard({ cardElement });
-
-      if (clickableForMatch) {
-        matchWith({ cardId: cardElement.dataset.cardId });
-      }
-    }
-  });
-
   const resetButtonElement = getResetButtonElement();
 
+  boardElement.addEventListener('click', (e) => {
+    e.stopPropagation();
+    let cardElement;
+    // 카드 3장 이상 연속 클릭 할 때, (그 중 앞의 2장이 미스매치됨 + 빠르게 하나더 클릭) 카드가 오픈되는 상황 방지
+    if (clearTimer) return;
+
+    if (e.target.dataset.testid === 'card') {
+      cardElement = e.target;
+    }
+    if (e.target.matches('input')) {
+      cardElement = e.target.parentElement;
+    }
+    if (e.target.matches('img')) {
+      cardElement = e.target.parentElement;
+    }
+
+    if (!cardElement) return;
+
+    // 더블 클릭 방지
+    if (cardElement.firstElementChild.disabled) return;
+
+    matchWith({ cardId: cardElement.dataset.cardId });
+  });
+
   resetButtonElement.addEventListener('click', (e) => {
+    goodMatchedCards.length = 0;
     const cards = getCards({ getCardElement });
     const randomCards = getRandomCards({ cards });
     boardElement.innerHTML = getBoardElement({ randomCards }).innerHTML;
+    if (document.querySelector('span')) {
+      document.querySelector('span').remove();
+    }
   });
 
-  const { clickableForMatch, matchWith } = getMatches();
-
-  function getMatches() {
-    const currentMatch = [];
-    const goodMatchedCards = [];
-    const clickableForMatch = currentMatch.length < 2;
-
-    function matchWith({ cardId }) {
+  function matchWith({ cardId }) {
+    if (currentMatch.length === 0 || currentMatch.length === 1) {
+      openCard({
+        cardElement: document.querySelector(`div[data-card-id="${cardId}"]`),
+      });
       currentMatch.push(cardId);
-      if (currentMatch.length === 2) {
-        const firstId = currentMatch.pop();
-        const secondId = currentMatch.pop();
-
-        const firstCard = document.querySelector(
-          `div[data-card-id="${firstId}"]`
-        );
-        const secondCard = document.querySelector(
-          `div[data-card-id="${secondId}"]`
-        );
-
-        if (firstId[0] !== secondId[0]) {
-          closeCard({ cardElement: firstCard });
-          closeCard({ cardElement: secondCard });
-        } else {
-          goodMatchedCards.push(firstCard, secondCard);
-        }
-      }
-      if (goodMatchedCards.length === 12) {
-        const End = document.createElement('span');
-        End.textContent = 'End!!!';
-        app.prepend(End);
-      }
     }
+    if (currentMatch.length === 2) {
+      const [firstId, secondId] = currentMatch;
 
-    return { clickableForMatch, matchWith };
+      const firstCard = document.querySelector(
+        `div[data-card-id="${firstId}"]`
+      );
+      const secondCard = document.querySelector(
+        `div[data-card-id="${secondId}"]`
+      );
+
+      if (firstId[0] !== secondId[0]) {
+        closeCard({ cardElement: firstCard });
+        closeCard({ cardElement: secondCard });
+      } else {
+        goodMatchedCards.push(firstCard, secondCard);
+      }
+
+      currentMatch.length = 0;
+    }
+    if (goodMatchedCards.length === 12) {
+      const End = document.createElement('span');
+      End.textContent = 'End!!!';
+      app.prepend(End);
+    }
   }
 
   function closeCard({ cardElement }) {
     const checkboxElement = cardElement.firstElementChild;
     checkboxElement.checked = false;
     checkboxElement.disabled = false;
-    cardElement.style.opacity = 0;
+    if (cardElement.classList.length === 0) {
+      // Init
+      cardElement.classList.add('closed');
+      return;
+    }
+    if (currentMatch.length === 2) {
+      clearTimer = setTimeout(() => {
+        cardElement.classList.add('closed');
+        if (cardElement.classList.contains('open')) {
+          cardElement.classList.remove('open');
+        }
+        clearTimer = null;
+      }, 500);
+    }
   }
 
   function openCard({ cardElement }) {
     const checkboxElement = cardElement.firstElementChild;
     checkboxElement.checked = true;
     checkboxElement.disabled = true;
-    cardElement.style.opacity = 1;
+    cardElement.classList.add('open');
   }
 
   app.append(boardElement, resetButtonElement);

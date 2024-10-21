@@ -1,0 +1,9 @@
+#board {
+  display: flex;
+}
+.closed {
+  opacity: 0;
+}
+.closed.open {
+  opacity: 1;
+}
