@@ -1,5 +1,35 @@
 #board {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(4, 100px);
+  gap: 10px;
+  place-items: center;
+  width: fit-content;
+  background-color: wheat;
+}
+#board > div {
+  width: 100px;
+  height: 126px;
+}
+#board > div > img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+span {
+  font-size: 30px;
+  font-style: italic;
+  font-weight: bold;
+  color: darkseagreen;
+}
+button {
+  border: none;
+  width: fit-content;
+  padding: 10px 15px;
+}
+#app {
+  gap: 10px;
   display: flex;
+  flex-direction: column;
 }
 .closed {
   opacity: 0;
